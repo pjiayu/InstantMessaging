@@ -7,4 +7,5 @@ package util;
 public interface RollBack {
     void UserLoginBack(String user);
     void UserTransmitBegin(String username,String goalName);
+    void SendOneLineMessage(String username,String goalName);
 }

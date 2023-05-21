@@ -15,17 +15,23 @@ public class RollBackImpl implements RollBack {
 
     @Override
     public void UserTransmitBegin(String username, String goalName) {
+
+    }
+
+    @Override
+    public void SendOneLineMessage(String username, String goalName) {
         //从username的缓存区发送字符串到goalName
         Socket goal = Utils.getUserIP(goalName);
         PrintWriter pw = null;
         try {
             OutputStream outputStream = goal.getOutputStream();
             pw = new PrintWriter(outputStream, true);
+            pw.println("OneLineMessage");
+            pw.println(username);
+            pw.println(Utils.TempString.get(username).toString());
+            pw.println("bye");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pw.println(username);
-        pw.println(Utils.TempString.get(username).toString());
-        pw.println("bye");
     }
 }
