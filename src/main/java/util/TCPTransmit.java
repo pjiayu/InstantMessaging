@@ -37,7 +37,7 @@ public class TCPTransmit implements Transmit, Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try  {
+        try {
             String line;
             String name = null;
             Utils.TempString.put(username, new StringBuilder());
@@ -58,8 +58,9 @@ public class TCPTransmit implements Transmit, Runnable {
                     stringBuilder.append(line).append("\n");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {//报错说明退出了，从UsersIPMap中删除
+            Utils.LoginOutUser(username);
+            Utils.TempString.remove(username);
         }
     }
 
