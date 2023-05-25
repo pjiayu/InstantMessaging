@@ -65,7 +65,12 @@ public class HandlerImpl implements Handler {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(fileName);
-            byte[] buffer = new byte[1024];
+            byte[] buffer;
+            if (Length < 1024) {
+                buffer = new byte[(int) Length];
+            } else {
+                buffer = new byte[1024];
+            }
             int len;
             long totalLen = 0;
             InputStream inputStream = ClientSocket.getInputStream();
@@ -75,6 +80,8 @@ public class HandlerImpl implements Handler {
                 if (totalLen == Length) {
                     System.out.println("served："+totalLen);
                     break;
+                }else if (Length - totalLen < buffer.length && (Length - totalLen < 1024)) {//Length - totalLen为接收区还需要接受的剩余量
+                    buffer = new byte[(int) (Length - totalLen)];
                 }
             }
         } catch (IOException e) {

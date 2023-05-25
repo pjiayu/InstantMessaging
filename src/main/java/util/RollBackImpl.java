@@ -76,8 +76,8 @@ public class RollBackImpl implements RollBack {
                 totalLen += len;
             }
             System.out.println(username + " send to " + goalName + "：" + totalLen);
-            Thread.sleep(2000);
-        } catch (IOException | InterruptedException e) {
+//            Thread.sleep(2000);
+        } catch (IOException e) {
             e.printStackTrace();
         }
         pw.println("bye");//本次会话结束
