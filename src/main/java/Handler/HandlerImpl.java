@@ -72,9 +72,8 @@ public class HandlerImpl implements Handler {
             while ((len = inputStream.read(buffer)) != -1) {
                 fos.write(buffer, 0, len);
                 totalLen += len;
-                System.out.println(totalLen);
                 if (totalLen == Length) {
-                    System.out.println(totalLen);
+                    System.out.println("served："+totalLen);
                     break;
                 }
             }

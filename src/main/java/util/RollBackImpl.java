@@ -37,6 +37,55 @@ public class RollBackImpl implements RollBack {
 
     @Override
     public void SendFile(String username, String goalName, String FilePath) {
+        Socket goal = Utils.getUserIP(goalName);
+        //获得文件名
+        int index = 0;
+        for (int i = FilePath.length() - 1; i >= 0; i--) {
+            if (FilePath.charAt(i) == '+') {
+                index = i;
+                break;
+            }
+        }
+        //获得文件长度并创建流资源
+        File file = null;
+        FileInputStream fis = null;
+        PrintWriter pw = null;
+        OutputStream os = null;
+        try {
+            file = new File(FilePath);
+            fis = new FileInputStream(file);
+            pw = new PrintWriter(goal.getOutputStream(), true);
+            os = goal.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        String FileName = FilePath.substring(index + 1);
+        pw.println("File");
+        pw.println(username);//第二行为发送方用户
+        pw.println(FileName);//第三行为文件名
+        pw.println(file.length());//第四行为文件长度
+
+        //开始发送
+        try {
+            byte[] buffer = new byte[1024];
+            long totalLen = 0;
+            int len;
+            while ((len = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+                totalLen += len;
+            }
+            System.out.println(username + " send to " + goalName + "：" + totalLen);
+            Thread.sleep(2000);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        pw.println("bye");//本次会话结束
+
+        try {
+            fis.close();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
