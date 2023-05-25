@@ -65,7 +65,7 @@ public class RollBackImpl implements RollBack {
         pw.println(username);//第二行为发送方用户
         pw.println(FileName);//第三行为文件名
         pw.println(file.length());//第四行为文件长度
-
+        System.out.println(file.length());
         //开始发送
         try {
             byte[] buffer = new byte[1024];

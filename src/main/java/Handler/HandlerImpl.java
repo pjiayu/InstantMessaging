@@ -53,7 +53,7 @@ public class HandlerImpl implements Handler {
                 fileName = Utils.storePath + username + "+" + fileName;
                 ReceiveFile(fileName, length);
             } else if (count == 3 && line.equals("bye")) {
-                System.out.println("bye");
+                System.out.println(line);
                 rollBack.SendFile(username, name, fileName);
                 return;
             }
