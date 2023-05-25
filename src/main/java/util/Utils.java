@@ -21,6 +21,7 @@ public class Utils {
     public static Map<String, StringBuilder> TempString;//中转消息时用于存储消息。
     public static info friend;
     public static LoginJudge loginJudge;
+    public static String storePath = "D:\\tempFile\\";
 
     public static void init() {
         UsersIPMap = new HashMap<>();

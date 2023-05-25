@@ -34,4 +34,9 @@ public class RollBackImpl implements RollBack {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void SendFile(String username, String goalName, String FilePath) {
+
+    }
 }

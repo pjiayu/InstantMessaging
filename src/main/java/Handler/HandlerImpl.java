@@ -24,25 +24,87 @@ public class HandlerImpl implements Handler {
         while ((line = br.readLine()) != null) {
             if (line.equals("OneLineMessage")) {
                 OneLineMessage(br);
+            } else if (line.equals("File")) {
+                File(br);
             }
         }
     }
 
-    public void OneLineMessage(BufferedReader br) throws IOException {
+    private void File(BufferedReader br) throws IOException {
+        String line;
+        String name = null;
+        String fileName = null;
+        String length = null;
+        int count = 0;
+        while ((line = br.readLine()) != null) {
+            if (count == 0) {
+                count++;
+                name = line;//获得目的用户名
+                System.out.println(name);
+            } else if (count == 1) {
+                count++;
+                fileName = line;
+                System.out.println(fileName);
+            } else if (count == 2) {
+                count++;
+                length = line;
+                System.out.println(length);
+                //获得文件名后立即开始接受
+                fileName = Utils.storePath + username + "+" + fileName;
+                ReceiveFile(fileName, length);
+            } else if (count == 3 && line.equals("bye")) {
+                System.out.println("bye");
+                rollBack.SendFile(username, name, fileName);
+                return;
+            }
+        }
+    }
+
+    private void ReceiveFile(String fileName, String length) {
+        long Length = Long.parseLong(length);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(fileName);
+            byte[] buffer = new byte[1024];
+            int len;
+            long totalLen = 0;
+            InputStream inputStream = ClientSocket.getInputStream();
+            while ((len = inputStream.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
+                totalLen += len;
+                System.out.println(totalLen);
+                if (totalLen == Length) {
+                    System.out.println(totalLen);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void OneLineMessage(BufferedReader br) throws IOException {
         String line;
         String name = null;
         int count = 0;
         while ((line = br.readLine()) != null) {
-            if (count == 0){
+            if (count == 0) {
                 count++;
                 name = line;//获得目的用户名
                 System.out.println(name);
-            }else if(count==1) {
+            } else if (count == 1) {
                 count++;
                 StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
                 System.out.println(line);
                 stringBuilder.append(line);
-            }else if(count == 2&&line.equals("bye")){
+            } else if (count == 2 && line.equals("bye")) {
                 //接收完毕，开始发送
                 rollBack.SendOneLineMessage(username, name);
                 //发送完毕，清空缓存
