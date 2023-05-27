@@ -1,8 +1,10 @@
 package test;
 
 import Friend.infoImpl;
+import Pojo.Group;
 import Pojo.User;
 import util.dao.ConnUtil;
+import util.dao.subDao.GroupDao;
 import util.dao.subDao.UserDao;
 
 import java.sql.Connection;
@@ -26,5 +28,18 @@ public class conntest {
         System.out.println(friendlist);
         //添加好友
 //        userDao.addFriend("pjy","chilun");
+        //创建群聊
+//        userDao.createGroup("pjy","1234");
+        //根据群聊名获取所有users
+//        List<User>userList=userDao.getAllUsersByGroup("四人帮");
+//        System.out.println(userList);
+
+        //加入群聊
+//        GroupDao groupDao=new GroupDao();
+//        groupDao.joinGroup("ppp","四人帮");
+        //根据username获取群列表
+//        List<Group> list=groupDao.getAllGroup("chilun");
+//        System.out.println(list);
+
     }
 }

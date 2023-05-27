@@ -10,6 +10,8 @@ public interface RollBack {
     void SendOneLineMessage(String username, String goalName);
     void SendFile(String username, String goalName, String FilePath);
     void addFriend(String username,String friendName);
+    void createGroup(String username,String groupName);
+    void joinGroup(String username,String joinGroupName);
     void addContentMsg(String send_user,String target_user,String content_msg);
     void getAllContentMsg(String send_user,String target_user);
 }

@@ -2,6 +2,7 @@ package Handler;
 
 import util.RollBack;
 import util.Utils;
+import util.dao.subDao.GroupDao;
 import util.dao.subDao.UserDao;
 
 import java.io.*;
@@ -16,6 +17,7 @@ public class HandlerImpl implements Handler {
     private String username;
     private RollBack rollBack;
     private UserDao userDao=new UserDao();
+    private GroupDao groupDao=new GroupDao();
 
     @Override
     public void handler() throws IOException {
@@ -30,6 +32,62 @@ public class HandlerImpl implements Handler {
                 File(br);
             } else if (line.equals("addFriend")) {
                 addFriend(br);
+            }else if(line.equals("createGroup")){
+                createGroup(br);
+            } else if (line.equals("joinGroup")) {
+                joinGroup(br);
+                System.out.println(1);
+            }else if (line.equals("getAllContentMsg")) {
+                getAllContentMsg(br);
+            }
+        }
+    }
+
+    private void joinGroup(BufferedReader br)throws IOException{
+        String line;
+        String joinGroupName=null;  //群聊名字
+        int count=0;
+        while((line=br.readLine())!=null){
+            if(count==0){
+                count++;
+                joinGroupName=line;
+                //数据库加入群聊
+                groupDao.joinGroup(username,joinGroupName);
+                System.out.println("加入群聊的消息:"+username+"已加入群聊 "+joinGroupName);
+                StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
+                stringBuilder.append(username+"已加入群聊 "+joinGroupName);
+
+            } else if (count==1 && line.equals("bye")) {
+                //接收完毕，开始发送
+                rollBack.joinGroup(username,joinGroupName);
+                //发送完毕，清空缓存
+                Utils.TempString.put(username, new StringBuilder());
+                return;
+
+            }
+        }
+    }
+    private void createGroup(BufferedReader br)throws IOException{
+        String line;
+        String groupName=null;  //群聊名字
+        int count=0;
+        while((line=br.readLine())!=null){
+            if(count==0){
+                count++;
+                groupName=line;
+                //数据库创建群聊
+                userDao.createGroup(username,groupName);
+                System.out.println("创建群聊的消息:"+username+"已创建群聊 "+groupName);
+                StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
+                stringBuilder.append(username+"已创建群聊 "+groupName);
+
+            } else if (count==1 && line.equals("bye")) {
+                //接收完毕，开始发送
+                rollBack.createGroup(username,groupName);
+                //发送完毕，清空缓存
+                Utils.TempString.put(username, new StringBuilder());
+                return;
+
             }else if (line.equals("getAllContentMsg")) {
                 getAllContentMsg(br);
             }
@@ -72,7 +130,7 @@ public class HandlerImpl implements Handler {
             } else if (count == 1) {
                 count++;
                 StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
-                System.out.println("添加好友的消息:"+line);
+                System.out.println("添加好友的消息:"+username+"请求"+line);
                 stringBuilder.append(username+"请求"+line);
                 //在数据库中添加好友
                 userDao.addFriend(username,friendName);

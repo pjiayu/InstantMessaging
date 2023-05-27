@@ -27,4 +27,11 @@ public class UserDao extends BaseDAO<User> {
         super.executeUpdate("insert into friendlist value(0,?,?,?,?)",owner.getId(),owner_username,friend.getId(),friend_username);
         super.executeUpdate("insert into friendlist value(0,?,?,?,?)",friend.getId(),friend_username,owner.getId(),owner_username);
     }
+    public void createGroup(String create_username,String groupName){
+        User create=super.load("select *from user where username=?",create_username);
+        super.executeUpdate("insert into `group`(groupname,create_uid) value(?,?)",groupName,create.getId());
+    }
+    public List<User> getAllUsersByGroup(String groupName){
+        return super.executeQuery("select *from user where id in(select user_id from group_and_user where group_id=(select id from `group` where groupname=?))",groupName);
+    }
 }

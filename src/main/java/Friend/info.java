@@ -1,5 +1,6 @@
 package Friend;
 
+import Pojo.Group;
 import Pojo.User;
 
 import java.util.List;
@@ -13,4 +14,5 @@ import java.util.List;
 public interface info {
 //    List<String> getFriends(String name);
     List<User> getFriends(String name);
+    List<Group> getGroups(String name);
 }

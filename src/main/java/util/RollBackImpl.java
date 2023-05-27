@@ -1,5 +1,8 @@
 package util;
 
+import util.dao.subDao.GroupDao;
+import util.dao.subDao.UserDao;
+
 import Pojo.contentMsg;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,6 +10,8 @@ import util.dao.subDao.contentMsgDao;
 import com.alibaba.fastjson.JSON;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 /**
@@ -14,6 +19,9 @@ import java.util.List;
  * @create 2023-05-20-10:11
  */
 public class RollBackImpl implements RollBack {
+
+
+    UserDao userDao=new UserDao();
     @Override
     public void UserLoginBack(String user) {
         System.out.println(user + "——" + Utils.getUserIP(user));
@@ -26,21 +34,41 @@ public class RollBackImpl implements RollBack {
 
     @Override
     public void SendOneLineMessage(String username, String goalName) {
-        //从username的缓存区发送字符串到goalName
-        Socket goal = Utils.getUserIP(goalName);
-        if (goal==null){
-            return;
-        }
-        PrintWriter pw = null;
-        try {
-            OutputStream outputStream = goal.getOutputStream();
-            pw = new PrintWriter(outputStream, true);
-            pw.println("OneLineMessage");
-            pw.println(username);
-            pw.println(Utils.TempString.get(username).toString());
-            pw.println("bye");
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<Socket> Group = new ArrayList<>();
+        if (goalName.charAt(0) == ':' && goalName.charAt(1) == ':') {
+            userDao.getAllUsersByGroup(goalName.substring(2)).forEach(o -> {
+                Group.add(Utils.getUserIP(o.getUsername()));
+            });
+            Group.forEach(socket -> {
+                PrintWriter pw = null;
+                try {
+                    OutputStream outputStream = socket.getOutputStream();
+                    pw = new PrintWriter(outputStream, true);
+                    pw.println("OneLineMessage");
+                    pw.println(goalName.substring(2) + "+" + username);
+                    pw.println(Utils.TempString.get(username).toString());
+                    pw.println("bye");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            //从username的缓存区发送字符串到goalName
+            Socket goal = Utils.getUserIP(goalName);
+            if (goal==null){
+                return;
+            }
+            PrintWriter pw = null;
+            try {
+                OutputStream outputStream = goal.getOutputStream();
+                pw = new PrintWriter(outputStream, true);
+                pw.println("OneLineMessage");
+                pw.println(username);
+                pw.println(Utils.TempString.get(username).toString());
+                pw.println("bye");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -74,7 +102,7 @@ public class RollBackImpl implements RollBack {
         pw.println(username);//第二行为发送方用户
         pw.println(FileName);//第三行为文件名
         pw.println(file.length());//第四行为文件长度
-        System.out.println("**********************"+file.length());
+        System.out.println(file.length());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -132,6 +160,46 @@ public class RollBackImpl implements RollBack {
             pw_own.println(Utils.TempString.get(friendName).toString());
             pw_own.println("bye");
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createGroup(String username, String groupName) {
+
+        Socket goal = Utils.getUserIP(username);
+        if (goal==null){
+            return;
+        }
+        PrintWriter pw = null;
+        try {
+            OutputStream outputStream = goal.getOutputStream();
+            pw = new PrintWriter(outputStream, true);
+            pw.println("createGroup");
+            pw.println(username);
+            pw.println(Utils.TempString.get(username).toString());
+            pw.println("bye");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void joinGroup(String username, String joinGroupName) {
+
+        Socket goal = Utils.getUserIP(username);
+        if (goal==null){
+            return;
+        }
+        PrintWriter pw = null;
+        try {
+            OutputStream outputStream = goal.getOutputStream();
+            pw = new PrintWriter(outputStream, true);
+            pw.println("joinGroup");
+            pw.println(username);
+            pw.println(Utils.TempString.get(username).toString());
+            pw.println("bye");
         } catch (IOException e) {
             e.printStackTrace();
         }
