@@ -7,6 +7,7 @@ package login;
 public class LoginJudgeImpl implements LoginJudge{
     @Override
     public boolean judge(String name, String password) {
+
         return true;
     }
 }

@@ -1,5 +1,7 @@
 package util;
 
+import Pojo.User;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -102,9 +104,11 @@ class SubAcceptLoginServerImpl implements Runnable {
                     //Client发送：
                     //friends:bye
                     while (true) {
-                        List<String> friends = Utils.friend.getFriends(name);
+                        List<User> friends = Utils.friend.getFriends(name);
                         pw.println("friends");
-                        friends.forEach(pw::println);
+                        for(int i=0;i<friends.size();i++){
+                            pw.println(friends.get(i).getUsername());
+                        }
                         pw.println("bye");
                         try {
                             Thread.sleep(1000);

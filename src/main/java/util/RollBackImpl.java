@@ -93,4 +93,21 @@ public class RollBackImpl implements RollBack {
             exception.printStackTrace();
         }
     }
+
+    @Override
+    public void addFriend(String username, String friendName) {
+        //从username的缓存区发送好友请求到friendName
+        Socket goal = Utils.getUserIP(friendName);
+        PrintWriter pw = null;
+        try {
+            OutputStream outputStream = goal.getOutputStream();
+            pw = new PrintWriter(outputStream, true);
+            pw.println("addFriendMessage");
+            pw.println(username);
+            pw.println(Utils.TempString.get(username).toString());
+            pw.println("bye");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
