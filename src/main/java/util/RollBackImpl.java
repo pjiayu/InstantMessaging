@@ -130,4 +130,24 @@ public class RollBackImpl implements RollBack {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void createGroup(String username, String groupName) {
+
+        Socket goal = Utils.getUserIP(username);
+        if (goal==null){
+            return;
+        }
+        PrintWriter pw = null;
+        try {
+            OutputStream outputStream = goal.getOutputStream();
+            pw = new PrintWriter(outputStream, true);
+            pw.println("createGroup");
+            pw.println(username);
+            pw.println(Utils.TempString.get(username).toString());
+            pw.println("bye");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

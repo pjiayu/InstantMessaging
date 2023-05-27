@@ -26,5 +26,7 @@ public class conntest {
         System.out.println(friendlist);
         //添加好友
 //        userDao.addFriend("pjy","chilun");
+        //创建群聊
+//        userDao.createGroup("pjy","1234");
     }
 }
