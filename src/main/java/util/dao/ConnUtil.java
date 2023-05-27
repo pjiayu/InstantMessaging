@@ -16,7 +16,7 @@ public class ConnUtil {
     public static final String DRIVER = "com.mysql.cj.jdbc.Driver" ;
     public static final String URL = "jdbc:mysql://localhost:3306/instantmessagingdb?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     public static final String USER = "root";
-    public static final String PWD = "20040213cqy" ;
+    public static final String PWD = "pjy20031207" ;
 
 
 
