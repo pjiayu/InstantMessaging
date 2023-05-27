@@ -22,6 +22,9 @@ public class RollBackImpl implements RollBack {
     public void SendOneLineMessage(String username, String goalName) {
         //从username的缓存区发送字符串到goalName
         Socket goal = Utils.getUserIP(goalName);
+        if (goal==null){
+            return;
+        }
         PrintWriter pw = null;
         try {
             OutputStream outputStream = goal.getOutputStream();
@@ -97,15 +100,32 @@ public class RollBackImpl implements RollBack {
     @Override
     public void addFriend(String username, String friendName) {
         //从username的缓存区发送好友请求到friendName
+
         Socket goal = Utils.getUserIP(friendName);
+        Socket own=Utils.getUserIP(username);
+        if(goal==null){
+            return;
+        }
         PrintWriter pw = null;
+        PrintWriter pw_own=null;
         try {
+            //给目标好友返回加好友结果
             OutputStream outputStream = goal.getOutputStream();
             pw = new PrintWriter(outputStream, true);
             pw.println("addFriendMessage");
             pw.println(username);
+            //预期是 目标好友那显示：xx给你发送了好友请求
             pw.println(Utils.TempString.get(username).toString());
             pw.println("bye");
+
+            //给自己返回结果
+            OutputStream outputStream_own=own.getOutputStream();
+            pw_own=new PrintWriter(outputStream_own,true);
+            pw_own.println("addFriendMessage");
+            pw_own.println(friendName);
+            pw_own.println(Utils.TempString.get(friendName).toString());
+            pw_own.println("bye");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
