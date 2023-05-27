@@ -2,6 +2,7 @@ package Handler;
 
 import util.RollBack;
 import util.Utils;
+import util.dao.subDao.GroupDao;
 import util.dao.subDao.UserDao;
 
 import java.io.*;
@@ -16,6 +17,7 @@ public class HandlerImpl implements Handler {
     private String username;
     private RollBack rollBack;
     private UserDao userDao=new UserDao();
+    private GroupDao groupDao=new GroupDao();
 
     @Override
     public void handler() throws IOException {
@@ -32,6 +34,34 @@ public class HandlerImpl implements Handler {
                 addFriend(br);
             }else if(line.equals("createGroup")){
                 createGroup(br);
+            } else if (line.equals("joinGroup")) {
+                joinGroup(br);
+                System.out.println(1);
+            }
+        }
+    }
+
+    private void joinGroup(BufferedReader br)throws IOException{
+        String line;
+        String joinGroupName=null;  //群聊名字
+        int count=0;
+        while((line=br.readLine())!=null){
+            if(count==0){
+                count++;
+                joinGroupName=line;
+                //数据库加入群聊
+                groupDao.joinGroup(username,joinGroupName);
+                System.out.println("加入群聊的消息:"+username+"已加入群聊 "+joinGroupName);
+                StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
+                stringBuilder.append(username+"已加入群聊 "+joinGroupName);
+
+            } else if (count==1 && line.equals("bye")) {
+                //接收完毕，开始发送
+                rollBack.joinGroup(username,joinGroupName);
+                //发送完毕，清空缓存
+                Utils.TempString.put(username, new StringBuilder());
+                return;
+
             }
         }
     }
