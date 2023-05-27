@@ -1,13 +1,21 @@
 package util;
 
+import util.dao.subDao.GroupDao;
+import util.dao.subDao.UserDao;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @auther 齿轮
  * @create 2023-05-20-10:11
  */
 public class RollBackImpl implements RollBack {
+
+
+    UserDao userDao=new UserDao();
     @Override
     public void UserLoginBack(String user) {
         System.out.println(user + "——" + Utils.getUserIP(user));
@@ -20,21 +28,41 @@ public class RollBackImpl implements RollBack {
 
     @Override
     public void SendOneLineMessage(String username, String goalName) {
-        //从username的缓存区发送字符串到goalName
-        Socket goal = Utils.getUserIP(goalName);
-        if (goal==null){
-            return;
-        }
-        PrintWriter pw = null;
-        try {
-            OutputStream outputStream = goal.getOutputStream();
-            pw = new PrintWriter(outputStream, true);
-            pw.println("OneLineMessage");
-            pw.println(username);
-            pw.println(Utils.TempString.get(username).toString());
-            pw.println("bye");
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<Socket> Group = new ArrayList<>();
+        if (goalName.charAt(0) == ':' && goalName.charAt(1) == ':') {
+            userDao.getAllUsersByGroup(goalName.substring(2)).forEach(o -> {
+                Group.add(Utils.getUserIP(o.getUsername()));
+            });
+            Group.forEach(socket -> {
+                PrintWriter pw = null;
+                try {
+                    OutputStream outputStream = socket.getOutputStream();
+                    pw = new PrintWriter(outputStream, true);
+                    pw.println("OneLineMessage");
+                    pw.println(goalName.substring(2) + "+" + username);
+                    pw.println(Utils.TempString.get(username).toString());
+                    pw.println("bye");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            //从username的缓存区发送字符串到goalName
+            Socket goal = Utils.getUserIP(goalName);
+            if (goal==null){
+                return;
+            }
+            PrintWriter pw = null;
+            try {
+                OutputStream outputStream = goal.getOutputStream();
+                pw = new PrintWriter(outputStream, true);
+                pw.println("OneLineMessage");
+                pw.println(username);
+                pw.println(Utils.TempString.get(username).toString());
+                pw.println("bye");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -143,6 +171,26 @@ public class RollBackImpl implements RollBack {
             OutputStream outputStream = goal.getOutputStream();
             pw = new PrintWriter(outputStream, true);
             pw.println("createGroup");
+            pw.println(username);
+            pw.println(Utils.TempString.get(username).toString());
+            pw.println("bye");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void joinGroup(String username, String joinGroupName) {
+
+        Socket goal = Utils.getUserIP(username);
+        if (goal==null){
+            return;
+        }
+        PrintWriter pw = null;
+        try {
+            OutputStream outputStream = goal.getOutputStream();
+            pw = new PrintWriter(outputStream, true);
+            pw.println("joinGroup");
             pw.println(username);
             pw.println(Utils.TempString.get(username).toString());
             pw.println("bye");
