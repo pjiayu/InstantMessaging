@@ -30,9 +30,36 @@ public class HandlerImpl implements Handler {
                 File(br);
             } else if (line.equals("addFriend")) {
                 addFriend(br);
+            }else if (line.equals("getAllContentMsg")) {
+                getAllContentMsg(br);
             }
         }
     }
+
+    private void getAllContentMsg(BufferedReader br)throws IOException {
+        String line;
+        String send_user = null;
+        String target_user = null;
+        int count = 0;
+        while ((line = br.readLine()) != null) {
+            if (count == 0) {
+                count++;
+                send_user = line;
+            } else if (count == 1) {
+                count++;
+                target_user = line;
+        }else if (count == 2 && line.equals("bye")) {
+            //接收完毕，开始发送
+            rollBack.getAllContentMsg(send_user, target_user);
+            //发送完毕，清空缓存
+            Utils.TempString.put(username, new StringBuilder());
+            return;
+        }
+
+
+    }
+    }
+
     private void addFriend(BufferedReader br)throws IOException {
         String line;
         String friendName = null;
@@ -59,7 +86,7 @@ public class HandlerImpl implements Handler {
         }
     }
 
-    private void File(BufferedReader br) throws IOException {
+    private void File  (BufferedReader br) throws IOException {
         String line;
         String name = null;
         String fileName = null;
@@ -106,6 +133,7 @@ public class HandlerImpl implements Handler {
             while ((len = inputStream.read(buffer)) != -1) {
                 fos.write(buffer, 0, len);
                 totalLen += len;
+                System.out.println(totalLen+":"+buffer);
                 if (totalLen == Length) {
                     System.out.println("served："+totalLen);
                     break;
@@ -138,6 +166,8 @@ public class HandlerImpl implements Handler {
                 count++;
                 StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
                 System.out.println(line);
+                System.out.println(line);
+                rollBack.addContentMsg(username,name,line);
                 stringBuilder.append(line);
             } else if (count == 2 && line.equals("bye")) {
                 //接收完毕，开始发送
