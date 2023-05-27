@@ -2,6 +2,7 @@ package Handler;
 
 import util.RollBack;
 import util.Utils;
+import util.dao.subDao.UserDao;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,6 +15,7 @@ public class HandlerImpl implements Handler {
     private Socket ClientSocket;
     private String username;
     private RollBack rollBack;
+    private UserDao userDao=new UserDao();
 
     @Override
     public void handler() throws IOException {
@@ -26,6 +28,33 @@ public class HandlerImpl implements Handler {
                 OneLineMessage(br);
             } else if (line.equals("File")) {
                 File(br);
+            } else if (line.equals("addFriend")) {
+                addFriend(br);
+            }
+        }
+    }
+    private void addFriend(BufferedReader br)throws IOException {
+        String line;
+        String friendName = null;
+        int count = 0;
+        while ((line = br.readLine()) != null) {
+            if (count == 0) {
+                count++;
+                friendName = line;//获得好友名字
+                System.out.println("好友名字："+friendName);
+            } else if (count == 1) {
+                count++;
+                StringBuilder stringBuilder = Utils.TempString.get(username);//将信息存储在源用户名中
+                System.out.println("添加好友的消息:"+line);
+                stringBuilder.append(username+"请求"+line);
+                //在数据库中添加好友
+                userDao.addFriend(username,friendName);
+            } else if (count == 2 && line.equals("bye")) {
+                //接收完毕，开始发送
+                rollBack.addFriend(username, friendName);
+                //发送完毕，清空缓存
+                Utils.TempString.put(username, new StringBuilder());
+                return;
             }
         }
     }

@@ -1,5 +1,7 @@
 package Friend;
 
+import Pojo.User;
+
 import java.util.List;
 
 /**
@@ -9,5 +11,6 @@ import java.util.List;
  * 这个接口用于得知有哪些朋友，输入本人的昵称，返回朋友的昵称
  */
 public interface info {
-    List<String> getFriends(String name);
+//    List<String> getFriends(String name);
+    List<User> getFriends(String name);
 }

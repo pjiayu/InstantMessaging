@@ -12,4 +12,5 @@ public interface RollBack {
     void SendOneLineMessage(String username, String goalName);
 
     void SendFile(String username, String goalName, String FilePath);
+    void addFriend(String username,String friendName);
 }
