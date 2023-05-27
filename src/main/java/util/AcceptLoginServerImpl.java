@@ -1,5 +1,6 @@
 package util;
 
+import Pojo.Group;
 import Pojo.User;
 
 import java.io.*;
@@ -105,10 +106,18 @@ class SubAcceptLoginServerImpl implements Runnable {
                     //friends:bye
                     while (true) {
                         List<User> friends = Utils.friend.getFriends(name);
+                        System.out.println("好友列表："+friends);
                         pw.println("friends");
                         for(int i=0;i<friends.size();i++){
                             pw.println(friends.get(i).getUsername());
                         }
+                        List<Group>groups=Utils.friend.getGroups(name);
+                        System.out.println("群聊列表："+groups);
+                        pw.println("groups");
+                        for(int i=0;i<groups.size();i++){
+                            pw.println(groups.get(i).getGroupname());
+                        }
+
                         pw.println("bye");
                         try {
                             Thread.sleep(1000);
