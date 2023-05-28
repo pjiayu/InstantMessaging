@@ -27,7 +27,7 @@ public class Utils {
         UsersIPMap = new HashMap<>();
         TempString = new HashMap<>();
         try {
-            serverSocket = new ServerSocket(18000);
+            serverSocket = new ServerSocket(20001);
         } catch (IOException e) {
             e.printStackTrace();
         }

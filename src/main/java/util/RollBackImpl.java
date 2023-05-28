@@ -3,9 +3,15 @@ package util;
 import util.dao.subDao.GroupDao;
 import util.dao.subDao.UserDao;
 
+import Pojo.contentMsg;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import util.dao.subDao.contentMsgDao;
+import com.alibaba.fastjson.JSON;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 /**
@@ -197,5 +203,62 @@ public class RollBackImpl implements RollBack {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void addContentMsg(String send_user, String target_user, String content_msg) {
+        try {
+            new contentMsgDao().addcontentMsg(send_user,target_user,content_msg);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getAllContentMsg(String send_user, String target_user) {
+        try {
+            Socket goal = Utils.getUserIP(target_user);
+            List<contentMsg> tmpcontentMsg=new contentMsgDao().getcontentMsg(send_user,target_user);
+            JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(tmpcontentMsg));
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                switch (jsonObject.getIntValue("send_id")){
+                    case 1:
+                        jsonObject.put("send_id","ppp");
+                        break;
+                    case 2:
+                        jsonObject.put("send_id","pjy");
+                        break;
+                    case 3:
+                        jsonObject.put("send_id","chilun");
+                        break;
+                    case 4:
+                        jsonObject.put("send_id","hzl");
+                        break;
+                    case 5:
+                        jsonObject.put("send_id","cqy");
+                        break;
+                }
+            }
+            String jsonString = JSON.toJSONString(jsonArray);
+            PrintWriter pw = null;
+            try {
+                OutputStream outputStream = goal.getOutputStream();
+                pw = new PrintWriter(outputStream, true);
+                pw.println("getAllContentMsg");
+                pw.println(jsonString);
+                pw.println("bye");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        new RollBackImpl().getAllContentMsg("hzl","pjy");
     }
 }
